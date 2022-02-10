@@ -1,0 +1,43 @@
+const Discord = require('discord.js');
+const config = require("./config.json");
+
+const client = new Discord.Client({intents:["GUILDS", "GUILD_MESSAGES"]});
+const prefix = ".";
+
+client.on("messageCreate", function(message) {
+    if (message.author.bot) return;
+    if(!message.content.startsWith(prefix)) return;
+    
+    const commandBody = message.content.slice(prefix.length);
+    const args = commandBody.split(' ');
+    const command = args.shift().toLowerCase();
+
+    if(command === "ping"){
+        const timeTaken = Date.now() - message.createdTimestamp;
+        message.reply(`Pong! This message had a latency of ${timeTaken}ms.`);
+    }
+});
+
+console.log("Luna Online")
+client.login(config.BOT_TOKEN);
+
+// bot.login(TOKEN);
+
+// bot.on('ready', () => {
+//   console.info(`Logged in as ${bot.user.tag}!`);
+// });
+
+// bot.on('message', msg => {
+//   if (msg.content === 'ping') {
+//     msg.reply('pong');
+//     msg.channel.send('pong');
+
+//   } else if (msg.content.startsWith('!kick')) {
+//     if (msg.mentions.users.size) {
+//       const taggedUser = msg.mentions.users.first();
+//       msg.channel.send(`You wanted to kick: ${taggedUser.username}`);
+//     } else {
+//       msg.reply('Please tag a valid user!');
+//     }
+//   }
+// });

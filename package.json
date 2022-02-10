@@ -1,0 +1,22 @@
+{
+  "name": "lunaai",
+  "version": "1.0.0",
+  "description": "DiscordBotV2_NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fawaz-strawberry/LunaAi.git"
+  },
+  "author": "Fawaz Mujtaba",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fawaz-strawberry/LunaAi/issues"
+  },
+  "homepage": "https://github.com/fawaz-strawberry/LunaAi#readme",
+  "dependencies": {
+    "discord.js": "^13.6.0"
+  }
+}
