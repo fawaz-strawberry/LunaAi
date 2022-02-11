@@ -19,7 +19,6 @@
   "dependencies": {
     "discord.js": "^13.6.0"
   },
-  {
-  "start":"node index.js"
-  }
+  "engines": { "node": "16.x" },
+  "scripts": { "start": "node index.js" }
 }
