@@ -12,7 +12,11 @@ client.on("messageCreate", function(message) {
     if(!message.content.startsWith(prefix)) {
         if(message.content.indexOf("420") != -1)
         {
-            message.reply("Someone say 420?\nhttps://i.gifer.com/AugW.gif")
+            message.reply("Someone say 420?\nhttps://thumbs.gfycat.com/WideeyedFarawayBlueandgoldmackaw-size_restricted.gif")
+        }
+        if(message.content.indexOf("comrade") != -1)
+        {
+            
         }
         else
         {
