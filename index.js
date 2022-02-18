@@ -12,7 +12,7 @@ client.on("messageCreate", function(message) {
     if(!message.content.startsWith(prefix)) {
         if(message.content.indexOf("420") != -1)
         {
-            message.reply("Someone say 420?\nhttps://i.imgur.com/ZwBqVla.gif?noredirect")
+            message.reply("Someone say 420?\nhttps://www.google.com/url?sa=i&url=https%3A%2F%2Fgfycat.com%2Ficyincomparablecricket&psig=AOvVaw0_SI4Qn1KPljDxhUJMXNb_&ust=1645300883382000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOCrmciFivYCFQAAAAAdAAAAABAN")
         }
         else
         {
