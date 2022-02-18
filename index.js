@@ -10,9 +10,9 @@ ADD_FILE = "LunaAi/contents/"
 client.on("messageCreate", function(message) {
     if (message.author.bot) return;
     if(!message.content.startsWith(prefix)) {
-        if(message.content.indexOf(" 420 ") != -1 || message.content.indexOf(" 420!") != -1 || message.content.indexOf(" 420.") != -1 || message.content.indexOf(" 420?") != -1)
+        if(message.content.indexOf("420") != -1)
         {
-            message.reply("https://i.imgur.com/ZwBqVla.gif?noredirect")
+            message.reply("Someone say 420?\nhttps://i.imgur.com/ZwBqVla.gif?noredirect")
         }
         else
         {
