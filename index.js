@@ -14,7 +14,7 @@ client.on("messageCreate", function(message) {
         {
             message.reply("Someone say 420?\nhttps://thumbs.gfycat.com/WideeyedFarawayBlueandgoldmackaw-size_restricted.gif")
         }
-        if(message.content.indexOf("comrade") != -1)
+        if(message.content.toLowerCase().indexOf("comrade") != -1)
         {
             message.channel.send("<:DomSalute:877258854444978247>")
         }
