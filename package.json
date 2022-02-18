@@ -18,5 +18,7 @@
   "homepage": "https://github.com/fawaz-strawberry/LunaAi#readme",
   "dependencies": {
     "discord.js": "^13.6.0"
-  }
+  },
+  "engines": { "node": "16.x" },
+  "scripts": { "start": "node index.js" }
 }

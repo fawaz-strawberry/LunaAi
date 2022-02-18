@@ -38,7 +38,7 @@ client.on("messageCreate", function(message) {
 });
 
 console.log("Luna Online")
-client.login(config.BOT_TOKEN);
+client.login(process.env.BOT_KEY);
 
 // bot.login(TOKEN);
 
