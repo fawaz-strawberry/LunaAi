@@ -16,6 +16,25 @@ client.on("messageCreate", function(message) {
         const timeTaken = Date.now() - message.createdTimestamp;
         message.reply(`Pong! This message had a latency of ${timeTaken}ms.`);
     }
+
+    if(command === "sum")
+    {
+        var sum = 0
+        for(var i = 0; i < args.length; i++)
+        {
+            var num = parseFloat(args[i])
+            if(num !== NaN)
+            {
+                sum += num
+            }
+            else
+            {
+                message.reply('Invalid argument: ' + args[i])
+            }
+        }
+
+        message.reply('= ' + sum)
+    }
 });
 
 console.log("Luna Online")
