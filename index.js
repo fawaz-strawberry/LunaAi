@@ -4,9 +4,21 @@ const config = require("./config.json");
 const client = new Discord.Client({intents:["GUILDS", "GUILD_MESSAGES"]});
 const prefix = ".";
 
+GITHUB_API = "https://api.github.com/repos/fawaz-strawberry/"
+ADD_FILE = "LunaAi/contents/"
+
 client.on("messageCreate", function(message) {
     if (message.author.bot) return;
-    if(!message.content.startsWith(prefix)) return;
+    if(!message.content.startsWith(prefix)) {
+        if(message.content.indexOf(" 420 ") != -1 || message.content.indexOf(" 420!") != -1 || message.content.indexOf(" 420.") != -1 || message.content.indexOf(" 420?") != -1)
+        {
+            message.reply("https://i.imgur.com/ZwBqVla.gif?noredirect")
+        }
+        else
+        {
+            return
+        }
+    };
     
     const commandBody = message.content.slice(prefix.length);
     const args = commandBody.split(' ');
@@ -35,6 +47,15 @@ client.on("messageCreate", function(message) {
 
         message.reply('= ' + sum)
     }
+
+    // if(command === "profile")
+    // {
+    //     var request = new XMLHttpRequest();
+
+    //     request.open('put', GITHUB_API + ADD_FILE)
+
+    //     request
+    // }
 });
 
 console.log("Luna Online")
