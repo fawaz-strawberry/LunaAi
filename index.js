@@ -16,7 +16,7 @@ client.on("messageCreate", function(message) {
         }
         if(message.content.indexOf("comrade") != -1)
         {
-            message.reply("<:DomSalute:877258854444978247>")
+            message.channel.send("<:DomSalute:877258854444978247>")
         }
         else
         {
