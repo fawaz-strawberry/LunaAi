@@ -4,7 +4,7 @@
   "description": "DiscordBotV2_NodeJS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/fawaz-strawberry/LunaAi#readme",
   "dependencies": {
-    "discord.js": "^13.6.0"
+    "@octokit/core": "^3.5.1",
+    "discord.js": "^13.6.0",
+    "node-fetch": "^2.6.7"
   },
-  "engines": { "node": "16.x" },
-  "scripts": { "start": "node index.js" }
+  "engines": {
+    "node": "16.x"
+  }
 }
