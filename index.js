@@ -3,7 +3,7 @@ const config = require("./config.json");
 const fetch = require('node-fetch');
 const { Octokit } = require("@octokit/core");
 
-const octokit = new Octokit({ auth: env.config.GITHUB_TOKEN });
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const client = new Discord.Client({intents:["GUILDS", "GUILD_MESSAGES"]});
 const prefix = ".";
 
@@ -249,4 +249,4 @@ function setAttribute(user_id, field, value){
 
 
 console.log("Luna Online")
-client.login(env.config.BOT_TOKEN);
+client.login(process.env.BOT_TOKEN);
