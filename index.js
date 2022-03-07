@@ -3,7 +3,9 @@ const config = require("./config.json");
 const fetch = require('node-fetch');
 const { Octokit } = require("@octokit/core");
 
-const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+//const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+const octokit = new Octokit({ auth: config.GITHUB_TOKEN });
+
 const client = new Discord.Client({intents:["GUILDS", "GUILD_MESSAGES"]});
 const prefix = ".";
 
@@ -48,6 +50,43 @@ client.on("messageCreate", function(message) {
     if(command === "咬人猫"){
         message.reply("https://www.youtube.com/watch?v=f9DyUvyIOfo")
     }
+
+    if(command === "birthday"){
+        if(args[0].startsWith('<@') && args[0].endsWith('>')){
+            birthday_count = 1
+            message_count = 1
+            mega_string = ""
+            if(args.length == 2)
+            {
+                birthday_count = parseInt(args[1])
+            }
+            
+            if(birthday_count > 50){
+                message_count = Math.floor(birthday_count / 50)
+                birthday_count = birthday_count - (message_count * birthday_count)
+                birthday_count = 50
+            }
+
+            if(message_count > 5){
+                message_count = 5
+                mega_string += "Ok bud you need to chill, 5 messages max\n"
+            }
+
+            for(var i = 0; i < message_count; i++)
+            {
+                for(var j = 0; j < birthday_count; j++)
+                {
+                    mega_string += "Happy Birthday " + args[0] + "!\n"
+                }
+                
+                message.channel.send(mega_string)
+                mega_string = "Happy Birthday\n"
+            }
+            
+        }
+    }
+
+    
 
     if(command === "sum")
     {
@@ -249,4 +288,5 @@ function setAttribute(user_id, field, value){
 
 
 console.log("Luna Online")
-client.login(process.env.BOT_TOKEN);
+//client.login(process.env.BOT_TOKEN);
+client.login(config.BOT_TOKEN);
