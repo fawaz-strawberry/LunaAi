@@ -26,8 +26,8 @@ PANTHER = "https://imsdb.com/scripts/Black-Panther.html"
 BIG_SICK = "https://imsdb.com/scripts/Big-Sick,-The.html"
 FATAL_INSTICT = "https://imsdb.com/scripts/Fatal-Instinct.html"
 
-#MOVIE_LIST = [STAR_WARS, KUNG_FU_PANDA, LEGO_MOVIE, JOKER, BEAN, LEBOWSKI, NEMO, CARS_2, ME_2, MEGAMIND, LALALAND, MIB, UP, ZOOTOPIA, ARTHUR, MUMMY, BIG_SICK, FATAL_INSTICT]
-MOVIE_LIST = [FATAL_INSTICT]
+MOVIE_LIST = [STAR_WARS, KUNG_FU_PANDA, LEGO_MOVIE, JOKER, BEAN, LEBOWSKI, NEMO, CARS_2, ME_2, MEGAMIND, LALALAND, MIB, UP, ZOOTOPIA, ARTHUR, MUMMY, BIG_SICK, FATAL_INSTICT]
+#MOVIE_LIST = [FATAL_INSTICT]
 
 def findLine(start, end, content):
     start_index = content.index(start)
