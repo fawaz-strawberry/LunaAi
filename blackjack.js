@@ -16,9 +16,17 @@ class BlackJack{
     }
 
     startingHand(){
+        this.houseHand.push(this.remainDECK[this.getCard()])
+        this.yourHand.push(this.remainDECK[this.getCard()])
+        this.houseHand.push(this.remainDECK[this.getCard()])
+        this.yourHand.push(this.remainDECK[this.getCard()])
+
         
     }
 
+    getCard(){
+        return Math.floor(Math.random() * this.remainDECK.length)
+    }
 
 
 }

@@ -25,9 +25,13 @@ MUMMY = "https://imsdb.com/scripts/Mummy,-The.html"
 PANTHER = "https://imsdb.com/scripts/Black-Panther.html"
 BIG_SICK = "https://imsdb.com/scripts/Big-Sick,-The.html"
 FATAL_INSTICT = "https://imsdb.com/scripts/Fatal-Instinct.html"
+AVATAR = "https://imsdb.com/scripts/Avatar.html"
+GAME_6 = "https://imsdb.com/scripts/Game-6.html"
+INTERSTELLAR = "https://imsdb.com/scripts/Interstellar.html"
+WOODSMAN = "https://imsdb.com/scripts/Woodsman,-The.html"
 
-MOVIE_LIST = [STAR_WARS, KUNG_FU_PANDA, LEGO_MOVIE, JOKER, BEAN, LEBOWSKI, NEMO, CARS_2, ME_2, MEGAMIND, LALALAND, MIB, UP, ZOOTOPIA, ARTHUR, MUMMY, BIG_SICK, FATAL_INSTICT]
-#MOVIE_LIST = [FATAL_INSTICT]
+MOVIE_LIST = [STAR_WARS, KUNG_FU_PANDA, LEGO_MOVIE, JOKER, BEAN, LEBOWSKI, NEMO, CARS_2, ME_2, MEGAMIND, LALALAND, MIB, UP, ZOOTOPIA, ARTHUR, MUMMY, BIG_SICK, FATAL_INSTICT, AVATAR, INTERSTELLAR]
+#MOVIE_LIST = []
 
 def findLine(start, end, content):
     start_index = content.index(start)
@@ -107,9 +111,9 @@ for movie in MOVIE_LIST:
                 temp_line = temp_line.strip()
 
                 if(temp_line in character_list):
-                    character_list[temp_line] += 1
+                    character_list["NAME: " + temp_line] += 1
                 else:
-                    character_list[temp_line] = 1
+                    character_list["NAME: " + temp_line] = 1
 
                 built_title += "NAME: " + temp_line + "\n"
         else:
@@ -136,10 +140,12 @@ for movie in MOVIE_LIST:
             character_list[x] = "Side_" + str(i - 9)
         i += 1
     
+    print(character_list)
+
     for quote in quotes:
         for x in character_list:
             quote = quote.replace(x, character_list[x])
-
+        print(quote)
         final_quotes.append(quote)
 
     # print(character_list)  
