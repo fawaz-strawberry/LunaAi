@@ -1,4 +1,4 @@
-from numpy import full
+from numpy import character, full
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -45,9 +45,11 @@ isPossibleQuote = False
 built_title = ""
 title_space = 0
 built_string = ""
-quotes = []
+
+final_quotes = []
 
 for movie in MOVIE_LIST:
+    quotes = []
     r = requests.get(movie)
 
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -68,7 +70,7 @@ for movie in MOVIE_LIST:
     line_list  = full_script.splitlines()
 
     reduced_list = []
-
+    character_list = {}
 
     for i in range(len(line_list) - 1):
         
@@ -98,7 +100,17 @@ for movie in MOVIE_LIST:
             else:
                 isPossibleQuote = True
                 temp_line = temp_line.replace("<b>", "")
+                
+                temp_line = temp_line.replace("(CONT'D)", "")
+                temp_line = temp_line.replace("(OS)", "")
+
                 temp_line = temp_line.strip()
+
+                if(temp_line in character_list):
+                    character_list[temp_line] += 1
+                else:
+                    character_list[temp_line] = 1
+
                 built_title += "NAME: " + temp_line + "\n"
         else:
             if(len(temp_line) > 0 and isPossibleQuote):
@@ -114,6 +126,24 @@ for movie in MOVIE_LIST:
                 isPossibleQuote = False
                 continue
 
+    character_list=dict(sorted(character_list.items(),key= lambda x:x[1], reverse=True))
+    final_list = {}
+    i = 1
+    for x in character_list:
+        if(i < 10):
+            character_list[x] = "Person_" + str(i)
+        else:
+            character_list[x] = "Side_" + str(i - 9)
+        i += 1
+    
+    for quote in quotes:
+        for x in character_list:
+            quote = quote.replace(x, character_list[x])
+
+        final_quotes.append(quote)
+
+    # print(character_list)  
+    # print("\n\n")          
 
     # print("len: " + str(len(temp_line)) + " -- " + temp_line[:100])
 
@@ -202,7 +232,7 @@ for movie in MOVIE_LIST:
 
 
 myText = open(r'MEGA_SCRIPT.txt','w')
-for quote in quotes:
+for quote in final_quotes:
     myText.write(quote)
     myText.write("\n")
 

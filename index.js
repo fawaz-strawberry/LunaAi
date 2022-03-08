@@ -30,10 +30,23 @@ client.on("messageCreate", function(message) {
         {
             message.reply("no u")
         }
+        if(checkIfContains(["pog", "poggies", "poggers"], message.content.toLowerCase())){
+            message.channel.send("<:MegaPog:735002364133507122>")
+        }
 
         return
 
     };
+
+    function checkIfContains(listToCheck, checkWithString){
+        for(var i = 0; i < listToCheck.length; i++){
+            if(checkWithString.indexOf(listToCheck[i]) != -1)
+            {
+                return true
+            }
+        }
+        return false
+    }
     
     const commandBody = message.content.slice(prefix.length);
     const args = commandBody.split(' ');
@@ -51,6 +64,9 @@ client.on("messageCreate", function(message) {
         message.reply("https://www.youtube.com/watch?v=f9DyUvyIOfo")
     }
 
+    /**
+     * Send Birthday Wishes to specified Users!
+     */
     if(command === "birthday"){
         if(args[0].startsWith('<@') && args[0].endsWith('>')){
             birthday_count = 1
@@ -103,9 +119,10 @@ client.on("messageCreate", function(message) {
                 message.reply('Invalid argument: ' + args[i])
             }
         }
-
         message.reply('= ' + sum)
     }
+
+
 
     if(command === "profile")
     {
@@ -133,8 +150,16 @@ client.on("messageCreate", function(message) {
                 {
                     if(args[1] === "birthday")
                     {
-                        month = convertMonthToNum(args[2])
-                        day = args[3]
+                        if(isNaN(args[2])){
+                            input = args[2].split("/")
+                            month = convertMonthToNum(input[0])
+                            day = input[1] 
+                        }
+                        else{
+                            month = args[2]
+                        }
+                        
+                        
 
                         if(month === -1 || day > 31 || day <= 0)
                         {
@@ -143,7 +168,7 @@ client.on("messageCreate", function(message) {
                         }
 
                         setAttribute(message.author.id, "birth_month", month)
-                        setAttribute(message.author.id, "birth_day", day)
+                        setAttribute(message.author.id,  "birth_day", day)
                         uploadUserData()
                         message.reply(message.author.username + " birthday set to " + month + "/" + day)
                         return;
@@ -151,6 +176,12 @@ client.on("messageCreate", function(message) {
                     else{
                         message.reply("Set what?(Will show options in the future)")
                     }   
+                }
+                else if(args[0] == "add")
+                {
+                    addCustomField(message.author.id, args[1], args[2])
+                    uploadUserData()
+                    message.reply("Added new field: " + args[1] + " with value: " + args[2] + " to your account")
                 }
                 else if(args[0] === "birthday")
                 {
@@ -167,7 +198,7 @@ client.on("messageCreate", function(message) {
                 }
                 else
                 {
-                    message.reply("Set what?(Will show options in the future)")
+                    message.reply("Display Options to Set Here")
                 }
             }
             else
@@ -182,8 +213,29 @@ client.on("messageCreate", function(message) {
         })
     }
 
+
+
+    if(command == "help")
+    {
+        message.channel.send({embeds: [generateHelp()]})
+    }
+
 });
 
+
+function generateHelp(){
+    const myEmbed = new Discord.MessageEmbed()
+    myEmbed.setTitle("Commands")
+    myEmbed.setDescription("The following is a list of commands and usage")
+    myEmbed.addFields(
+        {name: "Calculate Sum", value: ".sum 'num1' 'num2' 'num3'..."},
+        {name: "Send Birthday Messages", value: ".birthday 'number of messages'"},
+        {name: "View Profile", value:".profile || .profile view"},
+        {name: "Set Birthday", value:".profile set birthday 'month day' || .profile set birthday 'mm/dd'"}
+    )
+
+    return myEmbed
+}
 
 /**
  * Creates the embed of the current users profile
@@ -194,6 +246,8 @@ client.on("messageCreate", function(message) {
 function generateUserProfile(userID, username)
 {
 
+
+
     const myEmbed = new Discord.MessageEmbed()
     myEmbed.setColor('#0099ff')
     myEmbed.setTitle(username)
@@ -202,6 +256,14 @@ function generateUserProfile(userID, username)
     myEmbed.addFields(
 		{ name: 'Birthday', value: user_data[userID]["birth_month"] + "/" + user_data[userID]["birth_day"] },
 	)
+
+    console.log(user_data[userID])
+    for(var i = 0; i < user_data[userID]["special_info"].length; i++)
+    {
+        myEmbed.addFields(
+            {name: user_data[userID]["special_info"][i]["name"], value: user_data[userID]["special_info"][i]["value"]}
+        )
+    }
 
     return myEmbed
 }
@@ -213,7 +275,6 @@ function generateUserProfile(userID, username)
 function createUser(author){
     user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1}
     console.log(user_data)
-    uploadUserData()
 }
 
 /**
@@ -227,6 +288,22 @@ function uploadUserData(){
     })
 }
 
+/**
+ * Add new custom field that should be displayed to user
+ * @param {userID} input 
+ * @returns 
+ */
+function addCustomField(userID, name, value){
+    if(!("special_info" in user_data[userID]))
+    {
+        user_data[userID]["special_info"] = [{"name":name, "value":value}]
+    }
+    else{
+        user_data[userID]["special_info"].push({"name":name, "value":value})
+    }
+    
+    
+}
 
 
 function convertMonthToNum(input){
