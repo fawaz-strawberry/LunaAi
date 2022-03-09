@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const config = require("./config.json");
 const fetch = require('node-fetch');
+const BlackJack = require("./blackjack")
 const { Octokit } = require("@octokit/core");
 
 //const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
@@ -102,7 +103,14 @@ client.on("messageCreate", function(message) {
         }
     }
 
-    
+    if(command === "blackjack")
+    {
+        var table = BlackJack()
+        var status = table.catchTheseHands()
+
+        message.reply(status)
+
+    }
 
     if(command === "sum")
     {
@@ -245,8 +253,6 @@ function generateHelp(){
  */
 function generateUserProfile(userID, username)
 {
-
-
 
     const myEmbed = new Discord.MessageEmbed()
     myEmbed.setColor('#0099ff')
