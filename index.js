@@ -1,6 +1,8 @@
 const Discord = require('discord.js');
+const{ MessageActionRow, MessageButton } = require('discord.js')
 const config = require("./config.json");
 const fetch = require('node-fetch');
+const axios = require("axios")
 const BlackJack = require("./blackjack")
 const { Octokit } = require("@octokit/core");
 
@@ -12,6 +14,8 @@ const prefix = ".";
 
 var user_sha = ""
 var user_data = ""
+
+var button_count = 0
 
 GITHUB_API = "https://api.github.com/repos/fawaz-strawberry/"
 ADD_FILE = "LunaAi/contents/"
@@ -27,7 +31,7 @@ client.on("messageCreate", function(message) {
         {
             message.channel.send("<:DomSalute:877258854444978247>")
         }
-        if(message.content.toLowerCase().indexOf("loser") != -1)
+        if(message.content.toLowerCase().indexOf("loser") != -1 || message.content.toLowerCase().indexOf("cringe") != -1)
         {
             message.reply("no u")
         }
@@ -102,15 +106,49 @@ client.on("messageCreate", function(message) {
             
         }
     }
+    
+    
 
     if(command === "blackjack")
     {
-        var table = BlackJack()
-        var status = table.catchTheseHands()
+        button_count += 1
+        console.log("Creating Post: " + button_count)
+		const row = new MessageActionRow()
+			.addComponents(
+				new MessageButton()
+					.setCustomId('primary' + '_' + button_count.toString())
+					.setLabel('Start')
+					.setStyle('PRIMARY'),
+			);
+            
+        var myMessage = message.channel.send({embeds: [setTable()], components: [row]})
+                
+        // const collector = message.createMessageComponentCollector({time:15 * 1000})
+        // collector.on('collect', i => {
+        //     if (i.user.id === myMessage.user.id) {
+        //         i.reply(`${i.user.id} clicked on the ${i.customId} button.`);
+        //     } else {
+        //         i.reply({ content: `These buttons aren't for you!`, ephemeral: true });
+        //     }
+        // });
+        
+        // collector.on('end', collected => {
+        //     console.log(`Collected ${collected.size} interactions.`);
+        // });
+    }
 
-        message.reply(status)
+
+
+    
+
+
+    function maxHand(myCards){
 
     }
+
+
+
+    
 
     if(command === "sum")
     {
@@ -151,7 +189,6 @@ client.on("messageCreate", function(message) {
 
                 if(args[0] === "view" || args.length === 0)
                 {
-                    message.reply("Hello " + message.author.username + "!")
                     message.channel.send({embeds: [generateUserProfile(message.author.id, message.author.username)]})
                 }
                 else if(args[0] === "set")
@@ -165,9 +202,7 @@ client.on("messageCreate", function(message) {
                         }
                         else{
                             month = args[2]
-                        }
-                        
-                        
+                        }       
 
                         if(month === -1 || day > 31 || day <= 0)
                         {
@@ -177,7 +212,9 @@ client.on("messageCreate", function(message) {
 
                         setAttribute(message.author.id, "birth_month", month)
                         setAttribute(message.author.id,  "birth_day", day)
+                        
                         uploadUserData()
+                        
                         message.reply(message.author.username + " birthday set to " + month + "/" + day)
                         return;
                     }
@@ -228,6 +265,35 @@ client.on("messageCreate", function(message) {
         message.channel.send({embeds: [generateHelp()]})
     }
 
+    if(command == "speak")
+    {
+        finalarg = ""
+        for(var i = 0; i < args.length; i++){
+            finalarg += args[i] + " "
+        }
+        axios.post("http://192.168.0.214:4000/modelResponse", {
+            message:"NAME: Person_1\n" + finalarg + "\n\n"
+        }).then(response => {
+            console.log("\\n\n\n-----------------------------------\n")
+            myString = ((response.data).toString()).split("NAME:")
+            //myString.slice(myString.indexOf("\n"), myString.indexOf("NAME"))
+            myReplies = myString[1].split("\n")
+            
+            console.log(myReplies)
+
+            final_reply = ""
+            for(var i = 1; i < myReplies.length; i++)
+            {
+                final_reply += myReplies[i] + "\n"
+            }
+            message.reply(final_reply)
+            //.reply(response.data.split(response.data.indexOf("\r\n"), response.data.indexOf("\r\n\r\n")))
+        }).catch(err => {
+            console.log(err)
+            message.reply("My vocal cords currently need maintenence. Yell at Fawaz to fix em.")
+        })
+    }
+
 });
 
 
@@ -244,6 +310,60 @@ function generateHelp(){
 
     return myEmbed
 }
+
+function setTable() {
+    const myEmbed = new Discord.MessageEmbed()
+    myEmbed.setTitle("BlackJack Table")
+    myEmbed.setDescription("Welcome to the table, you have selected to gamble away x amount of dollars today. Are you sure you want to play?")
+    myEmbed.setImage("https://cdn0.iconfinder.com/data/icons/casino-15/512/as447_7-1024.png")
+    myEmbed.setFooter({text: "You should not be able to see this hopefully", iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+    return myEmbed
+}
+
+DECK = ["ace_d", "two_d", "three_d", "four_d", "five_d", "six_d", "seven_d", "eight_d", "nine_d", "ten_d", "jack_d", "queen_d", "king_d",
+        "ace_s", "two_s", "three_s", "four_s", "five_s", "six_s", "seven_s", "eight_s", "nine_s", "ten_s", "jack_s", "queen_s", "king_s",
+        "ace_h", "two_h", "three_h", "four_h", "five_h", "six_h", "seven_h", "eight_h", "nine_h", "ten_h", "jack_h", "queen_h", "king_h",
+        "ace_c", "two_c", "three_c", "four_c", "five_c", "six_c", "seven_c", "eight_c", "nine_c", "ten_c", "jack_c", "queen_c", "king_c"]
+
+function gameStart() {
+    const myEmbed = new Discord.MessageEmbed()
+    const attachment = new Discord.MessageAttachment("C:/Users/fawaz/Pictures/dancin_turtle.gif", "dancin_turtle.gif")
+
+    var hiddenCard = Math.floor(Math.random() * 52)
+    var player_1 = Math.floor(Math.random() * 52)
+    while(player_1 === hiddenCard)
+    {
+        player_1 = Math.floor(Math.random() * 52)
+    }
+    var dealerCard = Math.floor(Math.random() * 52)
+    while(dealerCard === player_1 || dealerCard === hiddenCard)
+    {
+        dealerCard = Math.floor(Math.random() * 52)
+    }
+    var player_2 = Math.floor(Math.random() * 52)
+    while(player_2 === player_1 || player_2 === dealerCard || player_2 === hiddenCard)
+    {
+        player_2 = Math.floor(Math.random() * 52)
+    }
+
+    //Generate random two numbers for Table
+    //Generate random two for player
+
+    table_cards = []
+    player_cards = []
+
+    let hexStr = dealerCard.toString(16);
+    if(hexStr.length === 1)
+    {
+        hexStr = "0" + hexStr
+    }
+    myEmbed.setColor("#0099" + hexStr)
+    myEmbed.setTitle("BlackJack Table")
+    myEmbed.setDescription("Dealer: " + DECK[dealerCard] + "\n" + "Player: " + DECK[player_1] + " " + DECK[player_2])
+    myEmbed.setImage("attachment://dancin_turtle.gif")
+    return myEmbed
+}
+
 
 /**
  * Creates the embed of the current users profile
@@ -307,8 +427,6 @@ function addCustomField(userID, name, value){
     else{
         user_data[userID]["special_info"].push({"name":name, "value":value})
     }
-    
-    
 }
 
 
@@ -369,6 +487,47 @@ function setAttribute(user_id, field, value){
 }
 
 
+client.on('interactionCreate', async interaction => {
+
+    console.log(interaction.customId + " -------------------------------------------")
+
+    if (!interaction.isButton()) return;
+    if(interaction.customId.startsWith("primary"))
+    {
+        console.log("Updating Embed")
+        button_count += 1
+        const row = new MessageActionRow()
+    	.addComponents(
+    		new MessageButton()
+    			.setCustomId('hit')
+    			.setLabel('HIT')
+    			.setStyle('SUCCESS'),
+            new MessageButton()
+    			.setCustomId('stand')
+    			.setLabel('STAND')
+    			.setStyle('DANGER')
+    	);
+        
+        await interaction.update({embeds: [gameStart()], files:["C:/Users/fawaz/Pictures/dancin_turtle.gif"], components: [row] });
+    }else if(interaction.customId.startsWith("hit"))
+    {
+        //Get player current cards draw a new card and then determine if we are illegal
+        console.log("Pog champ")
+        await interaction.reply("hit")
+
+    }else if(interaction.customId.startsWith("stand"))
+    {
+        //Check dealer hand and compare to player hand for greatest number
+
+        //if(greater end game) if greater than 21 end game if equal end game if less than draw
+        //check hand again and repeat
+
+        console.log("Less pog champ")
+        await interaction.reply("stand")
+    }
+
+
+});
 
 console.log("Luna Online")
 //client.login(process.env.BOT_TOKEN);
