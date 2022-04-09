@@ -420,8 +420,9 @@ function generateUserProfile(userID, username)
  * @param {*} author 
  */
 function createUser(author){
-    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1}
+    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "special_info":[]}
     console.log(user_data)
+    uploadUserData()
 }
 
 /**
