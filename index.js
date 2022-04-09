@@ -112,17 +112,83 @@ client.on("messageCreate", function(message) {
 
     if(command === "blackjack")
     {
+
+        var author_id = message.author.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
+    
+        }).then(() => {
+    
+            var myMoney = 0
+            //aka user exists
+            if(user_data.hasOwnProperty(author_id))
+            {
+                 console.log("Creating Post: " + button_count)
+
+                 myMoney = user_data[author_id]["Money"]
+                 var allButtons = []
+                 const row = new MessageActionRow().addComponents(new MessageButton()
+                 .setCustomId('Primary_0')
+                 .setLabel("$0")
+                 .setStyle("PRIMARY"),);
+                 
+                 for(i = 100; i <= myMoney; i = i * 2)
+                 {
+                     if(i > 1000)
+                     {
+                        break
+                     }
+                     row.addComponents(
+                     new MessageButton()
+                         .setCustomId('Primary_' + i.toString())
+                         .setLabel("$" + i.toString())
+                         .setStyle('PRIMARY'),
+                     );
+                 }
+         
+                 
+                     
+                 message.channel.send({embeds: [setTable(myMoney)], components: [row]})
+            }
+            else
+            {
+                //Needs to change to return default value based on field
+                createUser(message.author)
+                console.log("Creating Post: " + button_count)
+
+                var myMoney = 200
+                var allButtons = []
+                const row = new MessageActionRow().addComponents(new MessageButton()
+                .setCustomId('Primary_0')
+                .setLabel("$0")
+                .setStyle("PRIMARY"),);
+                
+                for(i = 100; i <= myMoney; i = i * 2)
+                {
+                    row.addComponents(
+                    new MessageButton()
+                        .setCustomId('Primary_' + i.toString())
+                        .setLabel("$" + i.toString())
+                        .setStyle('PRIMARY'),
+                    );
+                }
+        
+                
+                    
+                var myMessage = message.channel.send({embeds: [setTable(myMoney)], components: [row]})
+
+
+
+            }
+        })
+
+
         button_count += 1
-        console.log("Creating Post: " + button_count)
-		const row = new MessageActionRow()
-			.addComponents(
-				new MessageButton()
-					.setCustomId('primary' + '_' + button_count.toString())
-					.setLabel('Start')
-					.setStyle('PRIMARY'),
-			);
-            
-        var myMessage = message.channel.send({embeds: [setTable()], components: [row]})
+
                 
         // const collector = message.createMessageComponentCollector({time:15 * 1000})
         // collector.on('collect', i => {
@@ -275,7 +341,7 @@ client.on("messageCreate", function(message) {
         axios.post("http://192.168.0.214:4000/modelResponse", {
             message:"NAME: Person_1\n" + finalarg + "\n\n"
         }).then(response => {
-            console.log("\\n\n\n-----------------------------------\n")
+            console.log("\n\n\n-----------------------------------\n")
             myString = ((response.data).toString()).split("NAME:")
             //myString.slice(myString.indexOf("\n"), myString.indexOf("NAME"))
             myReplies = myString[1].split("\n")
@@ -312,12 +378,12 @@ function generateHelp(){
     return myEmbed
 }
 
-function setTable() {
+function setTable(yourMoney) {
     const myEmbed = new Discord.MessageEmbed()
     myEmbed.setTitle("BlackJack Table")
     myEmbed.setDescription("Welcome to the table, you have selected to gamble away x amount of dollars today. Are you sure you want to play?")
     myEmbed.setImage("https://cdn0.iconfinder.com/data/icons/casino-15/512/as447_7-1024.png")
-    myEmbed.setFooter({text: "You should not be able to see this hopefully", iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+    myEmbed.setFooter({text: "You have $" + yourMoney.toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
     return myEmbed
 }
 
@@ -329,7 +395,7 @@ DECK = ["ace_d", "two_d", "three_d", "four_d", "five_d", "six_d", "seven_d", "ei
 DECK_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
 
-async function gameStart() {
+async function gameStart(steaks) {
     const myEmbed = new Discord.MessageEmbed()
     
 
@@ -382,6 +448,7 @@ async function gameStart() {
     myEmbed.setTitle("BlackJack Table")
     myEmbed.setDescription("Dealer: " + DECK[dealerCard] + "\n" + "Player: " + DECK[player_1] + " " + DECK[player_2])
     myEmbed.setImage("attachment://PokerTable_START.png")
+    myEmbed.setFooter({text: "Money at Steak: " + steaks, iconURL: 'https://i.imgur.com/AfFp7pu.png'})
     return myEmbed
 }
 
@@ -402,6 +469,9 @@ function generateUserProfile(userID, username)
     myEmbed.setDescription("This user is a loser :)")
     myEmbed.addFields(
 		{ name: 'Birthday', value: user_data[userID]["birth_month"] + "/" + user_data[userID]["birth_day"] },
+        { name: 'Level', value: user_data[userID]["Level"].toString() },
+        { name: 'Money', value: user_data[userID]["Money"].toString() }
+
 	)
 
     console.log(user_data[userID])
@@ -420,22 +490,41 @@ function generateUserProfile(userID, username)
  * @param {*} author 
  */
 function createUser(author){
-    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "special_info":[]}
-    console.log(user_data)
-    uploadUserData()
+    octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+        user_sha = response.data.sha
+        let buff = Buffer.from(response.data.content, 'base64');  
+        let text = buff.toString('utf-8');
+        user_data = JSON.parse(text)
+
+    }).then(() => {
+        user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "birth_month":"00", "birth_day":"00", "special_info":[]}
+        console.log(user_data)
+        uploadUserData()
+    })
 }
 
 /**
  * Saves current state of user data into the json
  */
 function uploadUserData(){
+    console.log("Uploading User Data")
+    octokit.request('PUT /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {
+        message: 'message',
+        content: btoa(JSON.stringify(user_data)),
+        sha: user_sha
+    })
+
+    
+}
+
+function uploadUserData(userData){
     octokit.request('PUT /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {
         message: 'message',
         content: btoa(JSON.stringify(user_data)),
         sha: user_sha
     })
 }
-
 /**
  * Add new custom field that should be displayed to user
  * @param {userID} input 
@@ -514,8 +603,9 @@ client.on('interactionCreate', async interaction => {
     console.log(interaction.customId + " -------------------------------------------")
 
     if (!interaction.isButton()) return;
-    if(interaction.customId.startsWith("primary"))
+    if(interaction.customId.startsWith("Primary"))
     {
+        var money = interaction.customId.slice(8, interaction.customId.length)
         console.log("Updating Embed")
         button_count += 1
         const row = new MessageActionRow()
@@ -529,7 +619,7 @@ client.on('interactionCreate', async interaction => {
     			.setLabel('STAND')
     			.setStyle('DANGER')
     	);
-        var myEmbed = await gameStart()
+        var myEmbed = await gameStart(money)
         await interaction.update({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/PokerTable_START.png"], components: [row] });
     }else if(interaction.customId.startsWith("hit"))
     {
@@ -566,6 +656,11 @@ client.on('interactionCreate', async interaction => {
         console.log(dealer_cards)
         console.log(player_cards)
 
+        var footer = interaction.message.embeds[0].footer.text
+        console.log(footer)
+        var all_words = footer.split(" ")
+        var moneyEarned = parseInt(all_words[all_words.length - 1])
+
         if(checkHand(player_cards) > 21)
         {
             var new_description = "Game Over! You went over 21\nDealer:"
@@ -590,8 +685,10 @@ client.on('interactionCreate', async interaction => {
     
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
-           
-            
+            console.log("POGCHAMP")
+            console.log(interaction)
+            setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
+            uploadUserData()
             await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
         }
         else
@@ -622,7 +719,6 @@ client.on('interactionCreate', async interaction => {
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
            
-            
             await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"]});
         }
 
@@ -630,6 +726,11 @@ client.on('interactionCreate', async interaction => {
     }
     else if(interaction.customId.startsWith("stand"))
     {
+
+        var footer = interaction.message.embeds[0].footer.text
+        console.log(footer)
+        var all_words = footer.split(" ")
+        var moneyEarned = parseInt(all_words[all_words.length - 1])
 
         const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
         // Defining the text font
@@ -641,10 +742,13 @@ client.on('interactionCreate', async interaction => {
         console.log()
 
         var description = interaction.message.embeds[0].description
+        
 
         var dealer_cards = description.split("\n")[0].split(" ")
         var dealer_hidden = interaction.message.embeds[0].hexColor.slice(-2)
         var player_cards = description.split("\n")[1].split(" ")
+
+
 
         dealer_cards.shift(1)
         player_cards.shift(1)
@@ -689,7 +793,10 @@ client.on('interactionCreate', async interaction => {
 
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
-
+            console.log("POGCHAMP")
+            console.log(interaction)
+            setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] + moneyEarned)
+            uploadUserData()
             await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
         }
         else
@@ -720,7 +827,10 @@ client.on('interactionCreate', async interaction => {
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
            
-            
+            console.log("POGCHAMP")
+            console.log(interaction.user.id)
+            setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
+            uploadUserData()
             await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
         }
 
@@ -806,8 +916,29 @@ function getCardLetter(cardName){
     return letter
 }
 
-function addMoneyField(){
-    
+async function getFieldValue(author_id, field)
+{
+    octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+        user_sha = response.data.sha
+        let buff = Buffer.from(response.data.content, 'base64');  
+        let text = buff.toString('utf-8');
+        user_data = JSON.parse(text)
+
+    }).then(() => {
+
+        //aka user exists
+        if(user_data.hasOwnProperty(author_id))
+        {
+            return user_data[author_id][field]
+        }
+        else
+        {
+            //Needs to change to return default value based on field
+            createUser(author_id)
+            return 200
+        }
+    })
 }
 
 console.log("Luna Online")
