@@ -3,6 +3,7 @@ const{ MessageActionRow, MessageButton } = require('discord.js')
 const config = require("./config.json");
 const fetch = require('node-fetch');
 const axios = require("axios")
+const Jimp = require('jimp') ;
 const BlackJack = require("./blackjack")
 const { Octokit } = require("@octokit/core");
 
@@ -325,9 +326,21 @@ DECK = ["ace_d", "two_d", "three_d", "four_d", "five_d", "six_d", "seven_d", "ei
         "ace_h", "two_h", "three_h", "four_h", "five_h", "six_h", "seven_h", "eight_h", "nine_h", "ten_h", "jack_h", "queen_h", "king_h",
         "ace_c", "two_c", "three_c", "four_c", "five_c", "six_c", "seven_c", "eight_c", "nine_c", "ten_c", "jack_c", "queen_c", "king_c"]
 
-function gameStart() {
+DECK_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+
+async function gameStart() {
     const myEmbed = new Discord.MessageEmbed()
-    const attachment = new Discord.MessageAttachment("C:/Users/fawaz/Pictures/dancin_turtle.gif", "dancin_turtle.gif")
+    
+
+    const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+    // Defining the text font
+    const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+    
+    // Writing image after processing
+    
+
+    
 
     var hiddenCard = Math.floor(Math.random() * 52)
     var player_1 = Math.floor(Math.random() * 52)
@@ -352,15 +365,23 @@ function gameStart() {
     table_cards = []
     player_cards = []
 
-    let hexStr = dealerCard.toString(16);
+    let hexStr = hiddenCard.toString(16);
     if(hexStr.length === 1)
     {
         hexStr = "0" + hexStr
     }
+
+
+    image.print(font, 290, 550, getCardLetter(DECK[player_1]));
+    image.print(font, 290, 350, getCardLetter(DECK[dealerCard]));
+    image.print(font, 380, 550, getCardLetter(DECK[player_2]));
+
+    await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_START.png');
+
     myEmbed.setColor("#0099" + hexStr)
     myEmbed.setTitle("BlackJack Table")
     myEmbed.setDescription("Dealer: " + DECK[dealerCard] + "\n" + "Player: " + DECK[player_1] + " " + DECK[player_2])
-    myEmbed.setImage("attachment://dancin_turtle.gif")
+    myEmbed.setImage("attachment://PokerTable_START.png")
     return myEmbed
 }
 
@@ -507,27 +528,286 @@ client.on('interactionCreate', async interaction => {
     			.setLabel('STAND')
     			.setStyle('DANGER')
     	);
-        
-        await interaction.update({embeds: [gameStart()], files:["C:/Users/fawaz/Pictures/dancin_turtle.gif"], components: [row] });
+        var myEmbed = await gameStart()
+        await interaction.update({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/PokerTable_START.png"], components: [row] });
     }else if(interaction.customId.startsWith("hit"))
     {
+
+
+        const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+        // Defining the text font
+        const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+
         //Get player current cards draw a new card and then determine if we are illegal
         console.log("Pog champ")
-        await interaction.reply("hit")
 
-    }else if(interaction.customId.startsWith("stand"))
+        console.log()
+
+        var description = interaction.message.embeds[0].description
+        
+        var dealer_cards = description.split("\n")[0].split(" ")
+        var dealer_hidden = interaction.message.embeds[0].hexColor.slice(-2)
+        var player_cards = description.split("\n")[1].split(" ")
+        
+        dealer_cards.shift(1)
+        player_cards.shift(1)
+
+        console.log("Prior")
+        console.log(dealer_cards)
+        console.log(player_cards)
+
+        
+        
+        dealer_cards.push(DECK[parseInt(dealer_hidden, 16)])
+        player_cards.push(getNewCard([].concat(dealer_cards, player_cards)))
+
+        console.log("After")
+        console.log(dealer_cards)
+        console.log(player_cards)
+
+        if(checkHand(player_cards) > 21)
+        {
+            var new_description = "Game Over! You went over 21\nDealer:"
+            
+            for(var i = 0; i < dealer_cards.length-1; i++)
+            {
+                new_description += " " + dealer_cards[i]
+                image.print(font, 290 + 95 * i, 350, getCardLetter(dealer_cards[i]))
+                name_additions += "_" + dealer_cards[i]
+            }
+            new_description += "\nPlayer:"
+            for(var i = 0; i < player_cards.length; i++)
+            {
+                new_description += " " + player_cards[i]
+                image.print(font, 290 + 95 * i, 550, getCardLetter(player_cards[i]))
+                name_additions += "_" + player_cards[i]  
+            }
+            old_embed = interaction.message.embeds[0]
+            old_embed.setDescription(new_description)
+    
+            
+    
+            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
+           
+            
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+        }
+        else
+        {
+            var new_description = "Dealer:" 
+            var name_additions = ""
+
+            for(var i = 0; i < dealer_cards.length-1; i++)
+            {
+                new_description += " " + dealer_cards[i]
+                image.print(font, 290 + 95 * i, 350, getCardLetter(dealer_cards[i]))
+                name_additions += "_" + dealer_cards[i]
+            }
+            new_description += "\nPlayer:"
+            for(var i = 0; i < player_cards.length; i++)
+            {
+                new_description += " " + player_cards[i]
+                image.print(font, 290 + 95 * i, 550, getCardLetter(player_cards[i]))
+                name_additions += "_" + player_cards[i]            
+            }
+            
+            old_embed = interaction.message.embeds[0]
+            old_embed.setDescription(new_description)
+    
+            
+            
+    
+            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
+           
+            
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"]});
+        }
+
+
+    }
+    else if(interaction.customId.startsWith("stand"))
     {
-        //Check dealer hand and compare to player hand for greatest number
 
-        //if(greater end game) if greater than 21 end game if equal end game if less than draw
-        //check hand again and repeat
+        const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+        // Defining the text font
+        const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
 
-        console.log("Less pog champ")
-        await interaction.reply("stand")
+        //Get player current cards draw a new card and then determine if we are illegal
+        console.log("Pog champ")
+
+        console.log()
+
+        var description = interaction.message.embeds[0].description
+
+        var dealer_cards = description.split("\n")[0].split(" ")
+        var dealer_hidden = interaction.message.embeds[0].hexColor.slice(-2)
+        var player_cards = description.split("\n")[1].split(" ")
+
+        dealer_cards.shift(1)
+        player_cards.shift(1)
+
+        console.log("Prior")
+        console.log(dealer_cards)
+        console.log(player_cards)
+
+        dealer_cards.push(DECK[parseInt(dealer_hidden, 16)])
+
+        var hand_value = checkHand(dealer_cards)
+        while(hand_value < 17)
+        {
+            dealer_cards.push(getNewCard([].concat(dealer_cards, player_cards)))
+            hand_value = checkHand(dealer_cards)
+        }
+
+        var player_value = checkHand(player_cards)
+        if(player_value >= hand_value || hand_value > 21)
+        {
+            var new_description = "You Win!\n"
+            var name_additions = ""
+
+            new_description += "Player:"
+            
+            for(var i = 0; i < player_cards.length; i++)
+            {
+                new_description += " " + player_cards[i]
+                image.print(font, 290 + 95 * i, 550, getCardLetter(player_cards[i]))
+                name_additions += "_" + player_cards[i]
+            }
+            new_description += "\nDealer:"
+            for(var i = 0; i < dealer_cards.length; i++)
+            {
+                new_description += " " + dealer_cards[i]
+                image.print(font, 290 + 95 * i, 350, getCardLetter(dealer_cards[i]))
+                name_additions += "_" + dealer_cards[i]
+            }
+            old_embed = interaction.message.embeds[0]
+            new_description += "\nP: " + player_value + " D:" + hand_value
+            old_embed.setDescription(new_description)
+
+            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
+
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+        }
+        else
+        {
+
+
+            var new_description = "Game Over!\nDealer:" 
+            var name_additions = ""
+            
+            for(var i = 0; i < dealer_cards.length; i++)
+            {
+                new_description += " " + dealer_cards[i]
+                image.print(font, 290 + 95 * i, 350, getCardLetter(dealer_cards[i]))
+                name_additions += "_" + dealer_cards[i]
+            }
+            new_description += "\nPlayer:"
+            for(var i = 0; i < player_cards.length; i++)
+            {
+                new_description += " " + player_cards[i]
+                image.print(font, 290 + 95 * i, 550, getCardLetter(player_cards[i]))
+                name_additions += "_" + player_cards[i]
+            }
+            
+            new_description += "\nP: " + player_value + " D:" + hand_value
+            old_embed = interaction.message.embeds[0]
+            old_embed.setDescription(new_description)
+            
+            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
+           
+            
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+        }
+
+
     }
 
 
 });
+
+function getNewCard(cardList){
+    var myNewCard = DECK[Math.floor(Math.random() * 52)]
+    while(cardList.indexOf(myNewCard) != -1)
+    {
+        myNewCard = DECK[Math.floor(Math.random() * 52)]
+    }
+    return myNewCard
+}
+
+function checkHand(cardList){
+
+    var total_value = 0
+    var num_aces = 0
+
+    for(var i = 0; i < cardList.length; i++){
+        var card_value = DECK.indexOf(cardList[i]) % 13 + 1 
+        console.log("Deck: " + cardList[i] + " Value: " + card_value)
+        if(card_value === 1)
+        {
+            num_aces += 1
+            total_value += 1
+        }
+        else if(card_value > 10)
+        {
+            total_value += 10
+        }
+        else
+        {
+            total_value += card_value
+        }
+    }
+
+    for(var i = 0; i < num_aces; i++){
+        if(total_value + 10 <= 21){
+            total_value += 10
+        }
+    }
+
+    console.log("Total Value: " + total_value)
+    return total_value
+
+}
+
+function getCardLetter(cardName){
+    
+    var letter = ""
+    
+    var card_value = DECK.indexOf(cardName) % 13 + 1 
+    if(card_value === 1)
+    {
+        letter = "A"
+    }
+    else if(card_value == 10)
+    {
+        letter = "T"
+    }
+    else if(card_value == 11)
+    {
+        letter = "J"
+    }
+    else if(card_value == 12)
+    {
+        letter = "Q"
+    }
+    else if(card_value == 13)
+    {
+        letter = "K"
+    }
+    else
+    {
+        letter = card_value.toString()
+    }
+
+    return letter
+}
+
+function addMoneyField(){
+    
+}
 
 console.log("Luna Online")
 //client.login(process.env.BOT_TOKEN);
