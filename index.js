@@ -21,6 +21,14 @@ var button_count = 0
 GITHUB_API = "https://api.github.com/repos/fawaz-strawberry/"
 ADD_FILE = "LunaAi/contents/"
 
+var STORE_ITEMS = [
+    {"ItemCategory":"Profile Pic", "Cost": 100, "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"},
+    {"ItemCategory":"Profile Pic", "Cost": 500, "ItemName":"Chase", "ItemImage":"https://www.ixpap.com/images/2022/01/JaMarr-Chase-Wallpaper-2.jpg"},
+    {"ItemCategory":"Profile Pic", "Cost": 500, "ItemName":"Income Tax Return", "ItemImage":"https://www.colorado.edu/financialaid/sites/default/files/attached-files/1040_2020.png"},
+    {"ItemCategory":"Profile Pic", "Cost": 10000, "ItemName":"Memories!", "ItemImage":"https://cdn.discordapp.com/attachments/716161017213747241/915440240376815646/IMG_20140516_142739.jpg"},
+    {"ItemCategory":"Profile Pic", "Cost": 1000, "ItemName":"G.O.A.T.", "ItemImage":"https://pbs.twimg.com/media/E8XQT5HWQAM9xsd.jpg"}
+]
+
 client.on("messageCreate", function(message) {
     if (message.author.bot) return;
     if(!message.content.startsWith(prefix)) {
@@ -108,6 +116,145 @@ client.on("messageCreate", function(message) {
         }
     }
     
+
+
+    if(command === "store")
+    {
+        var author_id = message.author.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
+    
+        }).then(() => {
+    
+            if(user_data.hasOwnProperty(message.author.id))
+            {
+                if(user_data[message.author.id].hasOwnProperty("collection"))
+                {
+                    //create embed with next and back buttons to cycle through collection
+                }
+                else
+                {
+
+                    //Needs to change to return default value based on field
+                    
+                    user_data[message.author.id]['collection'] = [{"ItemCategory":"Profile Pic", "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"}]
+                    uploadUserData()
+                    
+
+                
+                    
+                
+                }
+            }    
+            else
+            {
+                createUser(message.author)
+                uploadUserData()
+            }
+        }).then(() => {
+
+            var myItems = STORE_ITEMS
+
+            const myEmbed = new Discord.MessageEmbed()
+            myEmbed.setTitle("Store --- " + STORE_ITEMS[0]["ItemName"] + " --- Cost: $" + STORE_ITEMS[0]["Cost"])
+            myEmbed.setDescription("Item #" + "0")
+            myEmbed.setImage(STORE_ITEMS[0]["ItemImage"])
+            myEmbed.setFooter({text: "You have $" + user_data[author_id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('Buy_Store')
+            .setLabel("Buy")
+            .setStyle("PRIMARY"),);
+            
+            if(myItems.length > 1)
+            {
+                row.addComponents(new MessageButton()
+                .setCustomId("Next_Store")
+                .setLabel("Next")
+                .setStyle("SUCCESS"));
+                row.addComponents(new MessageButton()
+                .setCustomId("Prev_Store")
+                .setLabel("Prev")
+                .setStyle("SUCCESS"));
+            }
+
+            message.channel.send({embeds: [myEmbed], components: [row]})
+        })
+    }
+
+    if(command === "collection")
+    {
+
+        var author_id = message.author.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
+    
+        }).then(() => {
+    
+            if(user_data.hasOwnProperty(message.author.id))
+            {
+                if(user_data[message.author.id].hasOwnProperty("collection"))
+                {
+                    //create embed with next and back buttons to cycle through collection
+                }
+                else
+                {
+
+                    //Needs to change to return default value based on field
+                    
+                    user_data[message.author.id]['collection'] = [{"ItemCategory":"Profile Pic", "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"}]
+                    uploadUserData()
+                    
+
+                
+                    
+                
+                }
+            }    
+            else
+            {
+                createUser(message.author)
+                uploadUserData()
+            }
+
+            
+        }).then(() => {
+
+            var myItems = user_data[author_id]["collection"]
+
+            const myEmbed = new Discord.MessageEmbed()
+            myEmbed.setTitle("Collection")
+            myEmbed.setDescription("Item #" + "0")
+            myEmbed.setImage(myItems[0]["ItemImage"])
+
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('Select')
+            .setLabel("Select")
+            .setStyle("PRIMARY"),);
+            
+            if(myItems.length > 1)
+            {
+                row.addComponents(new MessageButton()
+                .setCustomId("Next_Collect")
+                .setLabel("Next")
+                .setStyle("SUCCESS"));
+                row.addComponents(new MessageButton()
+                .setCustomId("Prev_Collect")
+                .setLabel("Prev")
+                .setStyle("SUCCESS"));
+            }
+
+            message.channel.send({embeds: [myEmbed], components: [row]})
+        })
+    }
     
 
     if(command === "blackjack")
@@ -158,6 +305,7 @@ client.on("messageCreate", function(message) {
             {
                 //Needs to change to return default value based on field
                 createUser(message.author)
+                
                 console.log("Creating Post: " + button_count)
 
                 var myMoney = 200
@@ -179,7 +327,9 @@ client.on("messageCreate", function(message) {
         
                 
                     
-                var myMessage = message.channel.send({embeds: [setTable(myMoney)], components: [row]})
+                message.channel.send({embeds: [setTable(myMoney)], components: [row]})
+            
+            
 
 
 
@@ -318,6 +468,7 @@ client.on("messageCreate", function(message) {
                 //Just straight up create user and view it
                 message.reply("Could not find user: " + message.author + "\nCreating Account Now... try again in few seconds")
                 createUser(message.author)
+                uploadUserData()
             }
 
         }).catch((err) => {
@@ -489,19 +640,9 @@ function generateUserProfile(userID, username)
  * Just straight up creates the base user and saves it into the profiles json
  * @param {*} author 
  */
-function createUser(author){
-    octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
-        
-        user_sha = response.data.sha
-        let buff = Buffer.from(response.data.content, 'base64');  
-        let text = buff.toString('utf-8');
-        user_data = JSON.parse(text)
-
-    }).then(() => {
-        user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "birth_month":"00", "birth_day":"00", "special_info":[]}
-        console.log(user_data)
-        uploadUserData()
-    })
+async function createUser(author){
+    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "birth_month":"00", "birth_day":"00", "special_info":[]}
+    user_data[author.id]['collection'] = [{"ItemCategory":"Profile Pic", "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"}]
 }
 
 /**
@@ -514,8 +655,6 @@ function uploadUserData(){
         content: btoa(JSON.stringify(user_data)),
         sha: user_sha
     })
-
-    
 }
 
 function uploadUserData(userData){
@@ -836,7 +975,208 @@ client.on('interactionCreate', async interaction => {
 
 
     }
+    else if(interaction.customId.startsWith("Select"))
+    {
 
+    }
+    else if(interaction.customId.startsWith("Next_Collect"))
+    {
+        var myItems = user_data[interaction.user.id]["collection"]
+
+        const myEmbed = interaction.message.embeds[0]
+
+        var itemNum = myEmbed.description
+        var number = parseInt(itemNum.split("#")[1])
+        number += 1
+
+        if(number >= myItems.length)
+        {
+            number = 0
+        }
+
+        myEmbed.setTitle("Collection")
+        myEmbed.setDescription("Item #" + number.toString())
+        myEmbed.setImage(myItems[number]["ItemImage"])
+
+        const row = new MessageActionRow().addComponents(new MessageButton()
+        .setCustomId('Select')
+        .setLabel("Select")
+        .setStyle("PRIMARY"),);
+        
+        if(myItems.length > 1)
+        {
+            row.addComponents(new MessageButton()
+            .setCustomId("Next_Collect")
+            .setLabel("Next")
+            .setStyle("SUCCESS"));
+            row.addComponents(new MessageButton()
+            .setCustomId("Prev_Collect")
+            .setLabel("Prev")
+            .setStyle("SUCCESS"));
+        }
+
+        await interaction.update({embeds: [myEmbed]})
+    }
+    else if(interaction.customId.startsWith("Prev_Collect"))
+    {
+        var myItems = user_data[interaction.user.id]["collection"]
+
+        const myEmbed = interaction.message.embeds[0]
+
+        var itemNum = myEmbed.description
+        var number = parseInt(itemNum.split("#")[1])
+        number -= 1
+
+        if(number < 0)
+        {
+            number = myItems.length - 1
+        }
+
+        myEmbed.setTitle("Collection")
+        myEmbed.setDescription("Item #" + number.toString())
+        myEmbed.setImage(myItems[number]["ItemImage"])
+
+        const row = new MessageActionRow().addComponents(new MessageButton()
+        .setCustomId('Select')
+        .setLabel("Select")
+        .setStyle("PRIMARY"),);
+        
+        if(myItems.length > 1)
+        {
+            row.addComponents(new MessageButton()
+            .setCustomId("Next_Collect")
+            .setLabel("Next")
+            .setStyle("SUCCESS"));
+            row.addComponents(new MessageButton()
+            .setCustomId("Prev_Collect")
+            .setLabel("Prev")
+            .setStyle("SUCCESS"));
+        }
+
+        await interaction.update({embeds: [myEmbed]})
+    }
+    else if(interaction.customId.startsWith("Next_Store"))
+    {
+        var myItems = STORE_ITEMS
+
+        const myEmbed = interaction.message.embeds[0]
+
+        var itemNum = myEmbed.description
+        var number = parseInt(itemNum.split("#")[1])
+        number += 1
+
+        if(number >= myItems.length)
+        {
+            number = 0
+        }
+
+        myEmbed.setTitle("Store --- " + myItems[number]["ItemName"] + " --- Cost: $" + STORE_ITEMS[number]["Cost"])
+        myEmbed.setDescription("Item #" + number.toString())
+        myEmbed.setImage(myItems[number]["ItemImage"])
+        myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+
+        const row = new MessageActionRow().addComponents(new MessageButton()
+        .setCustomId('Buy_Store')
+        .setLabel("Buy")
+        .setStyle("PRIMARY"),);
+        
+        if(myItems.length > 1)
+        {
+            row.addComponents(new MessageButton()
+            .setCustomId("Next_Store")
+            .setLabel("Next")
+            .setStyle("SUCCESS"));
+            row.addComponents(new MessageButton()
+            .setCustomId("Prev_Store")
+            .setLabel("Prev")
+            .setStyle("SUCCESS"));
+        }
+
+        await interaction.update({embeds: [myEmbed]})
+    }
+    else if(interaction.customId.startsWith("Prev_Store"))
+    {
+        var myItems = STORE_ITEMS
+
+        const myEmbed = interaction.message.embeds[0]
+
+        var itemNum = myEmbed.description
+        var number = parseInt(itemNum.split("#")[1])
+        number -= 1
+
+        if(number < 0)
+        {
+            number = myItems.length - 1
+        }
+
+        myEmbed.setTitle("Store --- " + myItems[number]["ItemName"] + " --- Cost: $" + STORE_ITEMS[number]["Cost"])
+        myEmbed.setDescription("Item #" + number.toString())
+        myEmbed.setImage(myItems[number]["ItemImage"])
+        myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+
+        const row = new MessageActionRow()
+        
+        if(myItems.length > 1)
+        {
+            row.addComponents(new MessageButton()
+            .setCustomId("Next_Store")
+            .setLabel("Next")
+            .setStyle("SUCCESS"));
+            row.addComponents(new MessageButton()
+            .setCustomId("Prev_Store")
+            .setLabel("Prev")
+            .setStyle("SUCCESS"));
+        }
+
+        await interaction.update({embeds: [myEmbed]})
+    }
+    else if(interaction.customId.startsWith("Buy_Store"))
+    {
+        var myItems = STORE_ITEMS
+
+        const myEmbed = interaction.message.embeds[0]
+
+        var itemNum = myEmbed.description
+        var number = parseInt(itemNum.split("#")[1])
+
+        if(user_data[interaction.user.id]["Money"] > myItems[number]["Cost"])
+        {
+            user_data[interaction.user.id]["Money"] -= myItems[number]["Cost"]
+            user_data[interaction.user.id]["collection"].push(myItems[number])
+            uploadUserData()
+            myEmbed.setTitle("Congratulations on Purchasing --- " + myItems[number]["ItemName"] + " --- Cost: $" + STORE_ITEMS[number]["Cost"])
+            myEmbed.setDescription("Item #" + number.toString())
+            myEmbed.setImage(myItems[number]["ItemImage"])
+            myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+        }
+        else
+        {
+            myEmbed.setTitle("Insufficient Funds For --- " + myItems[number]["ItemName"] + " --- Cost: $" + STORE_ITEMS[number]["Cost"])
+            myEmbed.setDescription("Item #" + number.toString())
+            myEmbed.setImage(myItems[number]["ItemImage"])
+            myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+        }
+
+
+        const row = new MessageActionRow().addComponents(new MessageButton()
+        .setCustomId('Buy_Store')
+        .setLabel("Buy")
+        .setStyle("PRIMARY"),);
+        
+        if(myItems.length > 1)
+        {
+            row.addComponents(new MessageButton()
+            .setCustomId("Next_Store")
+            .setLabel("Next")
+            .setStyle("SUCCESS"));
+            row.addComponents(new MessageButton()
+            .setCustomId("Prev_Store")
+            .setLabel("Prev")
+            .setStyle("SUCCESS"));
+        }
+
+        await interaction.update({embeds: [myEmbed]})
+    }
 
 });
 
@@ -914,31 +1254,6 @@ function getCardLetter(cardName){
     }
 
     return letter
-}
-
-async function getFieldValue(author_id, field)
-{
-    octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
-        
-        user_sha = response.data.sha
-        let buff = Buffer.from(response.data.content, 'base64');  
-        let text = buff.toString('utf-8');
-        user_data = JSON.parse(text)
-
-    }).then(() => {
-
-        //aka user exists
-        if(user_data.hasOwnProperty(author_id))
-        {
-            return user_data[author_id][field]
-        }
-        else
-        {
-            //Needs to change to return default value based on field
-            createUser(author_id)
-            return 200
-        }
-    })
 }
 
 console.log("Luna Online")
