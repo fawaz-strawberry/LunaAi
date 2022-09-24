@@ -3,6 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+'''
+The following is a list of all the different movies that will be parsed
+'''
 MEGA_SCRIPT = "MEGA_SCRIPT.txt"
 SAMPLE_URL = "https://imsdb.com/scripts/Joker.html"
 STAR_WARS = "https://imsdb.com/scripts/Star-Wars-The-Empire-Strikes-Back.html"

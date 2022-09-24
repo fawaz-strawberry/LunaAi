@@ -1,13 +1,10 @@
 const Discord = require('discord.js');
 const{ MessageActionRow, MessageButton } = require('discord.js')
 const config = require("./config.json");
-const fetch = require('node-fetch');
 const axios = require("axios")
 const Jimp = require('jimp') ;
 const BlackJack = require("./blackjack")
 const { Octokit } = require("@octokit/core");
-
-//const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 const octokit = new Octokit({ auth: config.GITHUB_TOKEN });
 
 const client = new Discord.Client({intents:["GUILDS", "GUILD_MESSAGES"]});
@@ -25,8 +22,65 @@ var STORE_ITEMS = [
     {"ItemCategory":"Profile Pic", "Cost": 100, "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"},
     {"ItemCategory":"Profile Pic", "Cost": 500, "ItemName":"Chase", "ItemImage":"https://www.ixpap.com/images/2022/01/JaMarr-Chase-Wallpaper-2.jpg"},
     {"ItemCategory":"Profile Pic", "Cost": 500, "ItemName":"Income Tax Return", "ItemImage":"https://www.colorado.edu/financialaid/sites/default/files/attached-files/1040_2020.png"},
-    {"ItemCategory":"Profile Pic", "Cost": 10000, "ItemName":"Memories!", "ItemImage":"https://cdn.discordapp.com/attachments/716161017213747241/915440240376815646/IMG_20140516_142739.jpg"},
-    {"ItemCategory":"Profile Pic", "Cost": 1000, "ItemName":"G.O.A.T.", "ItemImage":"https://pbs.twimg.com/media/E8XQT5HWQAM9xsd.jpg"}
+    {"ItemCategory":"Profile Pic", "Cost": 10000, "ItemName":"Young Pinoyhc", "ItemImage":"https://cdn.discordapp.com/attachments/716161017213747241/915440240376815646/IMG_20140516_142739.jpg"},
+    {"ItemCategory":"Profile Pic", "Cost": 1000, "ItemName":"G.O.A.T.", "ItemImage":"https://pbs.twimg.com/media/E8XQT5HWQAM9xsd.jpg"},
+    {"ItemCategory":"Profile Pic", "Cost": 300, "ItemName":"BoredApe", "ItemImage":"https://lh3.googleusercontent.com/ddUTBDnYEK0Jo2IbDFHh_l4JHlVHWIhQzcCnDK30hyyxcSNtpc9zI2AaubfgeNzdnuV4t7d1Fs9FakiQyRyBcxJtLzPmprOS_jbk=w1400-k"},
+    {"ItemCategory":"Profile Pic", "Cost": 1500, "ItemName":"Hate Symbol", "ItemImage":"https://ca-times.brightspotcdn.com/dims4/default/423fc28/2147483647/strip/true/crop/958x539+1+0/resize/1200x675!/quality/90/?url=https%3A%2F%2Fcalifornia-times-brightspot.s3.amazonaws.com%2Fc9%2F98%2Ffa3b0cb001e3541c5818a89cd5cc%2Fla-1475087498-snap-photo"},
+    {"ItemCategory":"Profile Pic", "Cost": 8000, "ItemName":"Brackele Mountain", "ItemImage":" https://cdn.discordapp.com/attachments/731607331661414552/963874971417997362/Snapchat-1806785934.jpg"}
+]
+
+var JOB_PATH = "C:/Users/fawaz/Pictures/SATQuestions/"
+var JOB_QUESTIONS = [
+    {"Question Image": "q1.png", "Answer": "D"},
+    {"Question Image": "q2.png", "Answer": "A"},
+    {"Question Image": "q3.png", "Answer": "C"},
+    {"Question Image": "q4.png", "Answer": "B"},
+    {"Question Image": "q5.png", "Answer": "C"},
+    {"Question Image": "q6.png", "Answer": "A"},
+    {"Question Image": "q7.png", "Answer": "B"},
+    {"Question Image": "q8.png", "Answer": "C"},
+    {"Question Image": "q9.png", "Answer": "B"},
+    {"Question Image": "q10.png", "Answer": "A"},
+    {"Question Image": "q11.png", "Answer": "D"},
+    {"Question Image": "q12.png", "Answer": "D"},
+    {"Question Image": "q13.png", "Answer": "B"},
+    {"Question Image": "q14.png", "Answer": "A"},
+    {"Question Image": "q15.png", "Answer": "D"},
+    {"Question Image": "q16.png", "Answer": "D"},
+    {"Question Image": "q17.png", "Answer": "C"},
+    {"Question Image": "q18.png", "Answer": "A"},
+    {"Question Image": "q19.png", "Answer": "B"},
+    {"Question Image": "q20.png", "Answer": "C"},
+    {"Question Image": "q21.png", "Answer": "E"},
+    {"Question Image": "q22.png", "Answer": "A"},
+    {"Question Image": "q23.png", "Answer": "D"},
+    {"Question Image": "q24.png", "Answer": "D"},
+    {"Question Image": "q25.png", "Answer": "E"},
+    {"Question Image": "q26.png", "Answer": "B"},
+    {"Question Image": "q27.png", "Answer": "D"},
+    {"Question Image": "q28.png", "Answer": "C"},
+    {"Question Image": "q29.png", "Answer": "D"},
+    {"Question Image": "q30.png", "Answer": "A"},
+    {"Question Image": "q31.png", "Answer": "A"},
+    {"Question Image": "q32.png", "Answer": "C"},
+    {"Question Image": "q33.png", "Answer": "A"},
+    {"Question Image": "q34.png", "Answer": "B"},
+    {"Question Image": "q35.png", "Answer": "D"},
+    {"Question Image": "q36.png", "Answer": "D"},
+    {"Question Image": "q37.png", "Answer": "B"},
+    {"Question Image": "q38.png", "Answer": "C"},
+    {"Question Image": "q39.png", "Answer": "D"},
+    {"Question Image": "q40.png", "Answer": "C"},
+    {"Question Image": "q41.png", "Answer": "B"},
+    {"Question Image": "q42.png", "Answer": "D"},
+    {"Question Image": "q43.png", "Answer": "A"},
+    {"Question Image": "q44.png", "Answer": "C"},
+    {"Question Image": "q45.png", "Answer": "B"},
+    {"Question Image": "q46.png", "Answer": "A"},
+    {"Question Image": "q47.png", "Answer": "A"},
+    {"Question Image": "q48.png", "Answer": "C"},
+    {"Question Image": "q49.png", "Answer": "D"},
+    {"Question Image": "q50.png", "Answer": "B"},
 ]
 
 client.on("messageCreate", function(message) {
@@ -40,7 +94,7 @@ client.on("messageCreate", function(message) {
         {
             message.channel.send("<:DomSalute:877258854444978247>")
         }
-        if(message.content.toLowerCase().indexOf("loser") != -1 || message.content.toLowerCase().indexOf("cringe") != -1)
+        if(message.content.toLowerCase().indexOf("loser") != -1 || message.content.toLowerCase().indexOf("cringe") != -1 || message.content.toLowerCase().indexOf("idiot") != -1)
         {
             message.reply("no u")
         }
@@ -48,9 +102,96 @@ client.on("messageCreate", function(message) {
             message.channel.send("<:MegaPog:735002364133507122>")
         }
 
+
+
+
+        var author_id = message.author.id
+        var myMessage = message.content.toLowerCase()
+
+
+        if(myMessage.indexOf("communism") != -1 || (myMessage.indexOf("taiwan") != -1 && myMessage.indexOf("not") != -1 && myMessage.indexOf("country") != -1) || checkIfContains(["china", "kpop"], myMessage))
+        {
+                console.log("Goooooood")
+                checkIfSocialCreditExists(author_id, message.author).then(() => {
+                user_data[author_id]["Social_Credit"] += 10
+                uploadUserData()
+
+                const myEmbed = new Discord.MessageEmbed()
+                myEmbed.setTitle("Social Credit Increased")
+                myEmbed.setDescription("Xi Jinping approves of your statement. Increasing Social Credit Score\nSocial Credit:" + user_data[author_id]["Social_Credit"])
+                myEmbed.setImage("attachment://SocialCredit_Up.gif")
+    
+                message.channel.send({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/SocialCredit_Up.gif"]})
+            }).catch((err) => {
+                console.log(err)
+            })
+            
+        }
+        else if(checkIfContains(["obama", "hate", "anime", "haydn", "freedom"], myMessage) || (myMessage.indexOf("taiwan") != -1 && myMessage.indexOf("not") == -1 && myMessage.indexOf("country") != -1))
+        {
+                console.log("triggered")
+                checkIfSocialCreditExists(author_id, message.author).then(() => {
+                    user_data[author_id]["Social_Credit"] -= 10
+                    uploadUserData()
+        
+                    const myEmbed = new Discord.MessageEmbed()
+                    myEmbed.setTitle("Social Credit Dropped")
+                    myEmbed.setDescription("Xi Jinping does NOT approve of your statement. Decreasing Social Credit Score\nSocial Credit:" + user_data[author_id]["Social_Credit"])
+                    myEmbed.setImage("attachment://SocialCredit_Down.gif")
+        
+                    message.channel.send({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/SocialCredit_Down.gif"]})
+
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+
+
+
         return
 
     };
+
+    function checkIfSocialCreditExists(author_id, author)
+    {
+        return new Promise(function(resolve, reject){
+            octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+                user_sha = response.data.sha
+                let buff = Buffer.from(response.data.content, 'base64');  
+                let text = buff.toString('utf-8');
+                user_data = JSON.parse(text)
+        
+            }).then(() => {
+                
+                if(user_data.hasOwnProperty(author_id))
+                {
+                    if(user_data[author_id].hasOwnProperty("Social_Credit"))
+                    {
+
+                    }
+                    else
+                    {
+                        user_data[author_id]["Social_Credit"] = 100
+                        uploadUserData()
+                    }
+                }
+                else
+                {
+                    createUser(author)
+                    uploadUserData()
+                    
+                }
+    
+            }).then(() => {
+                resolve()
+            }).catch(() => {
+                console.log("Error")
+                resolve()
+            })
+        })
+    }
+
 
     function checkIfContains(listToCheck, checkWithString){
         for(var i = 0; i < listToCheck.length; i++){
@@ -115,7 +256,68 @@ client.on("messageCreate", function(message) {
             
         }
     }
+
+
+    if(command === "job")
+    {
+        var author_id = message.author.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
     
+        }).then(() => {
+            
+            if(user_data.hasOwnProperty(message.author.id))
+            {
+                
+            }
+            else
+            {
+                createUser()
+                uploadUserData()
+            }
+
+        }).then(() => {
+
+            var num = Math.floor(Math.random() * JOB_QUESTIONS.length)
+            var myQuestion = JOB_QUESTIONS[num]
+
+            const myEmbed = new Discord.MessageEmbed()
+            myEmbed.setTitle("Answer Question Correctly to Earn $500")
+            myEmbed.setDescription("Question #" + num)
+            myEmbed.setImage("attachment://" + myQuestion["Question Image"])
+
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('A_Answer')
+            .setLabel("A")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('B_Answer')
+            .setLabel("B")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('C_Answer')
+            .setLabel("C")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('D_Answer')
+            .setLabel("D")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('E_Answer')
+            .setLabel("E")
+            .setStyle("PRIMARY"),);
+            
+
+            message.channel.send({embeds: [myEmbed], files:[JOB_PATH + myQuestion["Question Image"]], components: [row]})
+
+
+        })
+
+    }
 
 
     if(command === "store")
@@ -490,22 +692,27 @@ client.on("messageCreate", function(message) {
             finalarg += args[i] + " "
         }
         axios.post("http://192.168.0.214:4000/modelResponse", {
-            message:"NAME: Person_1\n" + finalarg + "\n\n"
+            message: finalarg + "\n\n"
         }).then(response => {
             console.log("\n\n\n-----------------------------------\n")
-            myString = ((response.data).toString()).split("NAME:")
-            //myString.slice(myString.indexOf("\n"), myString.indexOf("NAME"))
-            myReplies = myString[1].split("\n")
+            console.log(response.data)
+            myString = ((response.data).toString())
+            // //myString.slice(myString.indexOf("\n"), myString.indexOf("NAME"))
+            let myReplies = myString.split("\n")
             
             console.log(myReplies)
-
-            final_reply = ""
-            for(var i = 1; i < myReplies.length; i++)
+            let final_reply = ""
+            for(var i = 3; i < myReplies.length; i++)
             {
+                if(myReplies[i].indexOf("Person_") !== -1 || myReplies[i].indexOf("Side_") !== -1)
+                {
+                    break
+                }
                 final_reply += myReplies[i] + "\n"
             }
+
             message.reply(final_reply)
-            //.reply(response.data.split(response.data.indexOf("\r\n"), response.data.indexOf("\r\n\r\n")))
+            // .reply(response.data.split(response.data.indexOf("\r\n"), response.data.indexOf("\r\n\r\n")))
         }).catch(err => {
             console.log(err)
             message.reply("My vocal cords currently need maintenence. Yell at Fawaz to fix em.")
@@ -641,8 +848,18 @@ function generateUserProfile(userID, username)
  * @param {*} author 
  */
 async function createUser(author){
-    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "birth_month":"00", "birth_day":"00", "special_info":[]}
+    user_data[author.id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "Social_Credit": 100, "birth_month":"00", "birth_day":"00", "special_info":[]}
     user_data[author.id]['collection'] = [{"ItemCategory":"Profile Pic", "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"}]
+}
+
+
+/**
+ * Just straight up creates the base user and saves it into the profiles json
+ * @param {*} author 
+ */
+ async function createUser2(author_id){
+    user_data[author_id] = {"profile_pic":author.avatarURL(), "Description":"New User", "Money":200, "Level":1, "Social_Credit": 100, "birth_month":"00", "birth_day":"00", "special_info":[]}
+    user_data[author_id]['collection'] = [{"ItemCategory":"Profile Pic", "ItemName":"Default", "ItemImage":"https://res.cloudinary.com/teepublic/image/private/s--Ku4xV3Lr--/t_Preview/b_rgb:191919,c_lpad,f_jpg,h_630,q_90,w_1200/v1524328568/production/designs/2614953_0.jpg"}]
 }
 
 /**
@@ -820,7 +1037,10 @@ client.on('interactionCreate', async interaction => {
             old_embed = interaction.message.embeds[0]
             old_embed.setDescription(new_description)
     
-            
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('Restart_Blackjack')
+            .setLabel("Retry")
+            .setStyle("PRIMARY"));
     
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
@@ -828,7 +1048,7 @@ client.on('interactionCreate', async interaction => {
             console.log(interaction)
             setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
             uploadUserData()
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
         }
         else
         {
@@ -936,7 +1156,13 @@ client.on('interactionCreate', async interaction => {
             console.log(interaction)
             setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] + moneyEarned)
             uploadUserData()
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('Restart_Blackjack')
+            .setLabel("Retry")
+            .setStyle("PRIMARY"));
+
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
         }
         else
         {
@@ -966,11 +1192,16 @@ client.on('interactionCreate', async interaction => {
             await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
            
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('Restart_Blackjack')
+            .setLabel("Retry")
+            .setStyle("PRIMARY"));
+
             console.log("POGCHAMP")
             console.log(interaction.user.id)
             setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
             uploadUserData()
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[]});
+            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
         }
 
 
@@ -1139,7 +1370,7 @@ client.on('interactionCreate', async interaction => {
         var itemNum = myEmbed.description
         var number = parseInt(itemNum.split("#")[1])
 
-        if(user_data[interaction.user.id]["Money"] > myItems[number]["Cost"])
+        if(user_data[interaction.user.id]["Money"] >= myItems[number]["Cost"] && user_data[interaction.user.id]["collection"].indexOf(myItems[number]) == -1)
         {
             user_data[interaction.user.id]["Money"] -= myItems[number]["Cost"]
             user_data[interaction.user.id]["collection"].push(myItems[number])
@@ -1177,8 +1408,161 @@ client.on('interactionCreate', async interaction => {
 
         await interaction.update({embeds: [myEmbed]})
     }
+    else if(interaction.customId.endsWith("Answer"))
+    {
+        const myEmbed = interaction.message.embeds[0]
+        var number = parseInt(myEmbed.description.split("#")[1])
 
-});
+        if(JOB_QUESTIONS[number]["Answer"] === (interaction.customId).toString()[0])
+        {
+            user_data[interaction.user.id]["Money"] += 500
+            uploadUserData()
+            myEmbed.setTitle("Congratulations! Your answer was correct!\nYou've earned $500")
+            myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+        }
+        else
+        {
+            user_data[interaction.user.id]["Money"] -= 250
+            uploadUserData()
+            myEmbed.setTitle("Incorrect! You Lose $250 :(")
+            myEmbed.setFooter({text: "You have $" + user_data[interaction.user.id]["Money"].toString(), iconURL: 'https://i.imgur.com/AfFp7pu.png'})
+        }
+
+        const row = new MessageActionRow().addComponents(new MessageButton()
+        .setCustomId('Restart_Question')
+        .setLabel("Retry")
+        .setStyle("PRIMARY"));
+
+        await interaction.update({embeds: [myEmbed], components:[row], files:[]})
+    }
+    else if(interaction.customId.startsWith("Restart_Question"))
+    {
+        var author_id = interaction.user.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
+    
+        }).then(() => {
+            
+            if(user_data.hasOwnProperty(author_id))
+            {
+                
+            }
+            else
+            {
+                createUser()
+                uploadUserData()
+            }
+
+        }).then(() => {
+
+            var num = Math.floor(Math.random() * JOB_QUESTIONS.length)
+            var myQuestion = JOB_QUESTIONS[num]
+
+            const myEmbed = interaction.message.embeds[0]
+            myEmbed.setTitle("Answer Question Correctly to Earn $500")
+            myEmbed.setDescription("Question #" + num)
+            myEmbed.setImage("attachment://" + myQuestion["Question Image"])
+
+            const row = new MessageActionRow().addComponents(new MessageButton()
+            .setCustomId('A_Answer')
+            .setLabel("A")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('B_Answer')
+            .setLabel("B")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('C_Answer')
+            .setLabel("C")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('D_Answer')
+            .setLabel("D")
+            .setStyle("PRIMARY"),
+            new MessageButton()
+            .setCustomId('E_Answer')
+            .setLabel("E")
+            .setStyle("PRIMARY"),);
+            
+
+            interaction.update({embeds: [myEmbed], files:[JOB_PATH + myQuestion["Question Image"]], components: [row]})
+        })
+    }
+    else if(interaction.customId.startsWith("Restart_Blackjack"))
+    {
+        var author_id = interaction.user.id
+        octokit.request('GET /repos/fawaz-strawberry/LunaAi/contents/user_info_final.json', {}).then(response => {
+        
+            user_sha = response.data.sha
+            let buff = Buffer.from(response.data.content, 'base64');  
+            let text = buff.toString('utf-8');
+            user_data = JSON.parse(text)
+    
+        }).then(() => {
+    
+            var myMoney = 0
+            //aka user exists
+            if(user_data.hasOwnProperty(author_id))
+            {
+                 console.log("Creating Post: " + button_count)
+
+                 myMoney = user_data[author_id]["Money"]
+                 var allButtons = []
+                 const row = new MessageActionRow().addComponents(new MessageButton()
+                 .setCustomId('Primary_0')
+                 .setLabel("$0")
+                 .setStyle("PRIMARY"),);
+                 
+                 for(i = 100; i <= myMoney; i = i * 2)
+                 {
+                     if(i > 1000)
+                     {
+                        break
+                     }
+                     row.addComponents(
+                     new MessageButton()
+                         .setCustomId('Primary_' + i.toString())
+                         .setLabel("$" + i.toString())
+                         .setStyle('PRIMARY'),
+                     );
+                 }
+         
+                 
+                     
+                 interaction.update({embeds: [setTable(myMoney)], components: [row]})
+            }
+            else
+            {
+                //Needs to change to return default value based on field
+                createUser(message.author)
+                
+                console.log("Creating Post: " + button_count)
+
+                var myMoney = 200
+                var allButtons = []
+                const row = new MessageActionRow().addComponents(new MessageButton()
+                .setCustomId('Primary_0')
+                .setLabel("$0")
+                .setStyle("PRIMARY"),);
+                
+                for(i = 100; i <= myMoney; i = i * 2)
+                {
+                    row.addComponents(
+                    new MessageButton()
+                        .setCustomId('Primary_' + i.toString())
+                        .setLabel("$" + i.toString())
+                        .setStyle('PRIMARY'),
+                    );
+                }
+                interaction.update({embeds: [setTable(myMoney)], components: [row]})
+            }
+        })
+    }
+})
 
 function getNewCard(cardList){
     var myNewCard = DECK[Math.floor(Math.random() * 52)]
