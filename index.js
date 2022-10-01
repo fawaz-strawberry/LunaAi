@@ -29,7 +29,7 @@ var STORE_ITEMS = [
     {"ItemCategory":"Profile Pic", "Cost": 8000, "ItemName":"Brackele Mountain", "ItemImage":" https://cdn.discordapp.com/attachments/731607331661414552/963874971417997362/Snapchat-1806785934.jpg"}
 ]
 
-var JOB_PATH = "C:/Users/fawaz/Pictures/SATQuestions/"
+var JOB_PATH = "Graphics/SATQuestions/"
 var JOB_QUESTIONS = [
     {"Question Image": "q1.png", "Answer": "D"},
     {"Question Image": "q2.png", "Answer": "A"},
@@ -121,7 +121,7 @@ client.on("messageCreate", function(message) {
                 myEmbed.setDescription("Xi Jinping approves of your statement. Increasing Social Credit Score\nSocial Credit:" + user_data[author_id]["Social_Credit"])
                 myEmbed.setImage("attachment://SocialCredit_Up.gif")
     
-                message.channel.send({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/SocialCredit_Up.gif"]})
+                message.channel.send({embeds: [myEmbed], files:["Graphics/SocialCredit_Up.gif"]})
             }).catch((err) => {
                 console.log(err)
             })
@@ -139,7 +139,7 @@ client.on("messageCreate", function(message) {
                     myEmbed.setDescription("Xi Jinping does NOT approve of your statement. Decreasing Social Credit Score\nSocial Credit:" + user_data[author_id]["Social_Credit"])
                     myEmbed.setImage("attachment://SocialCredit_Down.gif")
         
-                    message.channel.send({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/SocialCredit_Down.gif"]})
+                    message.channel.send({embeds: [myEmbed], files:["Graphics/SocialCredit_Down.gif"]})
 
             }).catch((err) => {
                 console.log(err)
@@ -757,7 +757,7 @@ async function gameStart(steaks) {
     const myEmbed = new Discord.MessageEmbed()
     
 
-    const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+    const image = await Jimp.read('Graphics/PokerTable.png');
     // Defining the text font
     const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
     
@@ -800,7 +800,7 @@ async function gameStart(steaks) {
     image.print(font, 290, 350, getCardLetter(DECK[dealerCard]));
     image.print(font, 380, 550, getCardLetter(DECK[player_2]));
 
-    await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_START.png');
+    await image.writeAsync('Graphics/PokerTable_START.png');
 
     myEmbed.setColor("#0099" + hexStr)
     myEmbed.setTitle("BlackJack Table")
@@ -976,12 +976,12 @@ client.on('interactionCreate', async interaction => {
     			.setStyle('DANGER')
     	);
         var myEmbed = await gameStart(money)
-        await interaction.update({embeds: [myEmbed], files:["C:/Users/fawaz/Pictures/PokerTable_START.png"], components: [row] });
+        await interaction.update({embeds: [myEmbed], files:["Graphics/PokerTable_START.png"], components: [row] });
     }else if(interaction.customId.startsWith("hit"))
     {
 
 
-        const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+        const image = await Jimp.read('Graphics/PokerTable.png');
         // Defining the text font
         const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
 
@@ -1042,13 +1042,13 @@ client.on('interactionCreate', async interaction => {
             .setLabel("Retry")
             .setStyle("PRIMARY"));
     
-            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            await image.writeAsync('Graphics/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
             console.log("POGCHAMP")
             console.log(interaction)
             setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
             uploadUserData()
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
+            await interaction.update({embeds: [old_embed], files:['Graphics/PokerTable_' + name_additions + ".png"], components:[row]});
         }
         else
         {
@@ -1075,10 +1075,10 @@ client.on('interactionCreate', async interaction => {
             
             
     
-            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            await image.writeAsync('Graphics/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
            
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"]});
+            await interaction.update({embeds: [old_embed], files:['Graphics/PokerTable_' + name_additions + ".png"]});
         }
 
 
@@ -1091,7 +1091,7 @@ client.on('interactionCreate', async interaction => {
         var all_words = footer.split(" ")
         var moneyEarned = parseInt(all_words[all_words.length - 1])
 
-        const image = await Jimp.read('C:/Users/fawaz/Pictures/PokerTable.png');
+        const image = await Jimp.read('Graphics/PokerTable.png');
         // Defining the text font
         const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
 
@@ -1150,7 +1150,7 @@ client.on('interactionCreate', async interaction => {
             new_description += "\nP: " + player_value + " D:" + hand_value
             old_embed.setDescription(new_description)
 
-            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            await image.writeAsync('Graphics/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
             console.log("POGCHAMP")
             console.log(interaction)
@@ -1162,7 +1162,7 @@ client.on('interactionCreate', async interaction => {
             .setLabel("Retry")
             .setStyle("PRIMARY"));
 
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
+            await interaction.update({embeds: [old_embed], files:['Graphics/PokerTable_' + name_additions + ".png"], components:[row]});
         }
         else
         {
@@ -1189,7 +1189,7 @@ client.on('interactionCreate', async interaction => {
             old_embed = interaction.message.embeds[0]
             old_embed.setDescription(new_description)
             
-            await image.writeAsync('C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png");
+            await image.writeAsync('Graphics/PokerTable_' + name_additions + ".png");
             old_embed.setImage("attachment://PokerTable_" + name_additions + ".png")
            
             const row = new MessageActionRow().addComponents(new MessageButton()
@@ -1201,7 +1201,7 @@ client.on('interactionCreate', async interaction => {
             console.log(interaction.user.id)
             setAttribute(interaction.user.id, "Money", user_data[interaction.user.id]["Money"] - moneyEarned)
             uploadUserData()
-            await interaction.update({embeds: [old_embed], files:['C:/Users/fawaz/Pictures/PokerTable_' + name_additions + ".png"], components:[row]});
+            await interaction.update({embeds: [old_embed], files:['Graphics/PokerTable_' + name_additions + ".png"], components:[row]});
         }
 
 
